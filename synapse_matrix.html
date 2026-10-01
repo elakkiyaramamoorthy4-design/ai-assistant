@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNAPSE MATRIX AI - Futuristic Financial OS</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                    },
+                    colors: {
+                        theme: {
+                            bg: 'var(--bg-main)',
+                            panel: 'var(--bg-panel)',
+                            accent: 'var(--accent-primary)',
+                            secondary: 'var(--accent-secondary)',
+                            text: 'var(--text-main)',
+                            border: 'var(--border-color)',
+                            glow: 'var(--glow-color)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Default Theme: Bio-Tech Emerald */
+            --bg-main: #020d0a;
+            --bg-panel: rgba(4, 28, 20, 0.75);
+            --accent-primary: #00ffaa;
+            --accent-secondary: #008855;
+            --text-main: #e0fbf2;
+            --border-color: rgba(0, 255, 170, 0.3);
+            --glow-color: rgba(0, 255, 170, 0.4);
+            --font-accent: #00ffaa;
+        }
+
+        .theme-synthwave {
+            --bg-main: #0f051d;
+            --bg-panel: rgba(30, 10, 50, 0.75);
+            --accent-primary: #ff007f;
+            --accent-secondary: #00f0ff;
+            --text-main: #ffe6f7;
+            --border-color: rgba(255, 0, 127, 0.35);
+            --glow-color: rgba(255, 0, 127, 0.5);
+        }
+
+        .theme-abyss {
+            --bg-main: #020b18;
+            --bg-panel: rgba(6, 22, 48, 0.75);
+            --accent-primary: #00d9ff;
+            --accent-secondary: #0044ff;
+            --text-main: #e1f7ff;
+            --border-color: rgba(0, 217, 255, 0.35);
+            --glow-color: rgba(0, 217, 255, 0.5);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Sci-Fi Glass Panel */
+        .matrix-panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 15px rgba(0,0,0,0.5);
+            position: relative;
+            clip-path: polygon(
+                0 10px, 10px 0, 
+                calc(100% - 10px) 0, 100% 10px, 
+                100% calc(100% - 10px), calc(100% - 10px) 100%, 
+                10px 100%, 0 calc(100% - 10px)
+            );
+        }
+
+        /* Futuristic Scanline Effect */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* Neon Text Glow */
+        .glow-text {
+            text-shadow: 0 0 8px var(--accent-primary), 0 0 18px var(--accent-primary);
+        }
+
+        .glow-box {
+            box-shadow: 0 0 12px var(--glow-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+
+        /* Pulse Animations */
+        @keyframes cyber-pulse {
+            0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px var(--accent-primary)); }
+            50% { opacity: 0.6; filter: drop-shadow(0 0 2px var(--accent-primary)); }
+        }
+
+        .animate-cyber-pulse {
+            animation: cyber-pulse 2.5s infinite ease-in-out;
+        }
+
+        /* Matrix Canvas Overlay */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-teal-500 selection:text-black">
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Overlay scanlines -->
+    <div class="scanlines fixed inset-0 z-10 pointer-events-none"></div>
+
+    <div class="relative z-20 flex flex-col min-h-screen p-3 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
+
+        <!-- TOP HUD HEADER -->
+        <header class="matrix-panel p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="relative flex items-center justify-center w-12 h-12 rounded-full border-2 border-[var(--accent-primary)] animate-cyber-pulse">
+                    <i class="fa-solid font-bold text-2xl text-[var(--accent-primary)] fa-brain"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-black text-2xl md:text-3xl tracking-widest text-[var(--accent-primary)] glow-text">
+                        SYNAPSE<span class="text-white">.MATRIX</span>
+                    </h1>
+                    <p class="font-mono text-xs text-slate-400 tracking-wider">SYSTEM v4.0.9 // QUANTUM FINANCIAL CORE</p>
+                </div>
+            </div>
+
+            <!-- CONTROLS: Theme Switcher & Audio Toggle -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Theme Buttons -->
+                <div class="flex bg-black/40 p-1 border border-[var(--border-color)] rounded-lg">
+                    <button onclick="setTheme('emerald')" title="Bio-Tech Emerald" class="px-3 py-1 text-xs font-mono rounded transition-all hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                        EMERALD
+                    </button>
+                    <button onclick="setTheme('synthwave')" title="Synthwave Neon" class="px-3 py-1 text-xs font-mono rounded transition-all hover:bg-pink-500/20 text-pink-400 border border-pink-500/40 ml-1">
+                        SYNTH
+                    </button>
+                    <button onclick="setTheme('abyss')" title="Deep Abyss Blue" class="px-3 py-1 text-xs font-mono rounded transition-all hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 ml-1">
+                        ABYSS
+                    </button>
+                </div>
+
+                <!-- Sound FX Toggle -->
+                <button id="sound-btn" onclick="toggleAudio()" class="px-3 py-1.5 border border-[var(--border-color)] bg-black/50 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-black font-mono text-xs flex items-center space-x-2 transition-all">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                    <span id="sound-text">AUDIO ON</span>
+                </button>
+
+                <!-- Export Data Button -->
+                <button onclick="exportJSONReport()" class="px-3 py-1.5 bg-[var(--accent-primary)] text-black font-orbitron font-bold text-xs tracking-wider hover:opacity-90 transition-all flex items-center space-x-2 glow-box">
+                    <i class="fa-solid fa-download"></i>
+                    <span>EXPORT MATRIX DATA</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD CONTENT -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+
+            <!-- LEFT COLUMN: Input Matrix & AI Prompt Engine (4 Cols) -->
+            <section class="lg:col-span-4 flex flex-col space-y-6">
+                
+                <!-- BALANCE METRICS STATS -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="matrix-panel p-4 flex flex-col justify-between">
+                        <span class="font-mono text-xs text-slate-400">TOTAL NET LIQUIDITY</span>
+                        <div class="font-orbitron text-xl md:text-2xl font-bold text-[var(--accent-primary)] my-2" id="stat-net-balance">
+                            $0.00
+                        </div>
+                        <div class="h-1 bg-black/60 rounded overflow-hidden">
+                            <div id="stat-balance-bar" class="h-full bg-[var(--accent-primary)] w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                    <div class="matrix-panel p-4 flex flex-col justify-between">
+                        <span class="font-mono text-xs text-slate-400">BURN RATE / EXPENSES</span>
+                        <div class="font-orbitron text-xl md:text-2xl font-bold text-rose-500 my-2" id="stat-total-expenses">
+                            $0.00
+                        </div>
+                        <div class="h-1 bg-black/60 rounded overflow-hidden">
+                            <div id="stat-expense-bar" class="h-full bg-rose-500 w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRANSACTION LOG ENTRY FORM -->
+                <div class="matrix-panel p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                        <h2 class="font-orbitron text-sm font-bold text-[var(--accent-primary)] flex items-center space-x-2">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>INJECT TRANSACTION DATA</span>
+                        </h2>
+                        <span class="font-mono text-[10px] text-slate-500">DATA_STREAM//IN</span>
+                    </div>
+
+                    <form id="tx-form" onsubmit="handleAddTransaction(event)" class="space-y-3">
+                        <div>
+                            <label class="block font-mono text-xs text-slate-400 mb-1">TRANSACTION DESCRIPTION</label>
+                            <input type="text" id="tx-title" required placeholder="e.g. Neural Link Upgrade / Salary Payload" class="w-full bg-black/60 border border-[var(--border-color)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent-primary)] font-mono transition-all">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-mono text-xs text-slate-400 mb-1">AMOUNT ($)</label>
+                                <input type="number" step="0.01" id="tx-amount" required placeholder="0.00" class="w-full bg-black/60 border border-[var(--border-color)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent-primary)] font-mono transition-all">
+                            </div>
+                            <div>
+                                <label class="block font-mono text-xs text-slate-400 mb-1">DATA TYPE</label>
+                                <select id="tx-type" class="w-full bg-black/60 border border-[var(--border-color)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent-primary)] font-mono transition-all">
+                                    <option value="expense">EXPENSE (-)</option>
+                                    <option value="income">INCOME (+)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-400 mb-1">CATEGORY MATRIX</label>
+                            <select id="tx-category" class="w-full bg-black/60 border border-[var(--border-color)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent-primary)] font-mono transition-all">
+                                <option value="Cybernetics & Tech">Cybernetics & Tech</option>
+                                <option value="Housing & Grid">Housing & Grid</option>
+                                <option value="Nutrients & Fuel">Nutrients & Fuel</option>
+                                <option value="Data & Cloud">Data & Cloud</option>
+                                <option value="Entertainment Matrix">Entertainment Matrix</option>
+                                <option value="Yield Payload">Yield Payload (Income)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-[var(--accent-primary)] text-black font-orbitron font-bold text-xs tracking-widest hover:brightness-110 transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>EXECUTE ENTRY</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- AI PROMPT ENGINE -->
+                <div class="matrix-panel p-5 flex flex-col flex-grow space-y-3">
+                    <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                        <h2 class="font-orbitron text-sm font-bold text-[var(--accent-primary)] flex items-center space-x-2">
+                            <i class="fa-solid fa-microchip"></i>
+                            <span>SYNAPSE AI ENGINE</span>
+                        </h2>
+                        <span id="ai-status-badge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ONLINE</span>
+                    </div>
+
+                    <div id="ai-chat-box" class="flex-grow bg-black/50 border border-[var(--border-color)] p-3 font-mono text-xs space-y-3 max-h-56 overflow-y-auto">
+                        <div class="text-slate-400">
+                            <span class="text-[var(--accent-primary)] font-bold">[SYNAPSE AI]:</span> Greetings Operator. Input your financial queries or submit commands to analyze spending vectors.
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-2">
+                        <input type="text" id="ai-input" onkeypress="if(event.key==='Enter') executeAIQuery()" placeholder="Ask AI: e.g. 'Optimize spending', 'Forecast balance'..." class="flex-grow bg-black/60 border border-[var(--border-color)] px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent-primary)] font-mono">
+                        <button onclick="executeAIQuery()" class="px-3 bg-[var(--accent-primary)] text-black font-bold text-xs hover:brightness-110">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- RIGHT COLUMN: Analytics, Heatmap & Target Matrix (8 Cols) -->
+            <section class="lg:col-span-8 flex flex-col space-y-6">
+
+                <!-- TARGET GOALS MATRIX & HEATMAP GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- FINANCIAL GOALS PROGRESS MATRIX -->
+                    <div class="matrix-panel p-5 space-y-4">
+                        <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                            <h2 class="font-orbitron text-sm font-bold text-[var(--accent-primary)] flex items-center space-x-2">
+                                <i class="fa-solid fa-crosshair"></i>
+                                <span>TARGET GOALS MATRIX</span>
+                            </h2>
+                            <button onclick="showGoalModal()" class="text-xs font-mono text-[var(--accent-primary)] hover:underline">+ ADD GOAL</button>
+                        </div>
+
+                        <div id="goals-container" class="space-y-3 max-h-48 overflow-y-auto pr-1">
+                            <!-- Dynamically Generated Goals -->
+                        </div>
+                    </div>
+
+                    <!-- EXPENSE CATEGORY HEAT MAP ANALYTICS -->
+                    <div class="matrix-panel p-5 space-y-4">
+                        <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                            <h2 class="font-orbitron text-sm font-bold text-[var(--accent-primary)] flex items-center space-x-2">
+                                <i class="fa-solid fa-fire"></i>
+                                <span>EXPENSE HEAT MAP ANALYTICS</span>
+                            </h2>
+                            <span class="font-mono text-[10px] text-slate-500">DENSITY MATRIX</span>
+                        </div>
+
+                        <div id="heatmap-grid" class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <!-- Heatmap Nodes injected via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- HOLOGRAPHIC LEDGER TABLE -->
+                <div class="matrix-panel p-5 flex-grow flex flex-col space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border-color)] pb-3 gap-2">
+                        <h2 class="font-orbitron text-sm font-bold text-[var(--accent-primary)] flex items-center space-x-2">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>LIVE TRANSACTION LEDGER</span>
+                        </h2>
+
+                        <!-- Filter buttons -->
+                        <div class="flex space-x-1 text-xs font-mono">
+                            <button onclick="filterTransactions('all')" class="px-2 py-1 bg-black/40 border border-[var(--border-color)] hover:bg-[var(--accent-primary)] hover:text-black">ALL</button>
+                            <button onclick="filterTransactions('income')" class="px-2 py-1 bg-black/40 border border-[var(--border-color)] hover:bg-emerald-500 hover:text-black">INCOME</button>
+                            <button onclick="filterTransactions('expense')" class="px-2 py-1 bg-black/40 border border-[var(--border-color)] hover:bg-rose-500 hover:text-black">EXPENSES</button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto flex-grow">
+                        <table class="w-full text-left font-mono text-xs">
+                            <thead>
+                                <tr class="border-b border-[var(--border-color)] text-slate-400">
+                                    <th class="pb-2">DATE / ID</th>
+                                    <th class="pb-2">DESCRIPTION</th>
+                                    <th class="pb-2">CATEGORY</th>
+                                    <th class="pb-2 text-right">VALUE</th>
+                                    <th class="pb-2 text-center">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-body" class="divide-y divide-white/5">
+                                <!-- Dynamic ledger entries -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- SYSTEM FOOTER HUD -->
+        <footer class="matrix-panel p-3 text-center md:flex justify-between items-center text-xs font-mono text-slate-500">
+            <div>
+                SECURITY_PROTOCOL: <span class="text-emerald-400">ENCRYPTED_256BIT</span>
+            </div>
+            <div>
+                SYNAPSE MATRIX FINANCIAL CORE &copy; 2026 // ALL RIGHTS RESERVED
+            </div>
+            <div id="clock-display" class="text-[var(--accent-primary)] font-bold">
+                00:00:00 UTC
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- MODAL FOR CREATING TARGET GOALS -->
+    <div id="goal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="matrix-panel p-6 max-w-md w-full space-y-4 m-4">
+            <h3 class="font-orbitron text-lg font-bold text-[var(--accent-primary)]">NEW TARGET GOAL</h3>
+            <div class="space-y-3 font-mono text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">GOAL NAME</label>
+                    <input type="text" id="goal-name-input" placeholder="e.g. Quantum Server Upgrade" class="w-full bg-black/80 border border-[var(--border-color)] p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">TARGET AMOUNT ($)</label>
+                    <input type="number" id="goal-target-input" placeholder="5000" class="w-full bg-black/80 border border-[var(--border-color)] p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">CURRENT SAVED ($)</label>
+                    <input type="number" id="goal-current-input" placeholder="1000" class="w-full bg-black/80 border border-[var(--border-color)] p-2 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="hideGoalModal()" class="px-4 py-2 bg-slate-800 text-slate-300 font-mono text-xs">CANCEL</button>
+                <button onclick="saveGoal()" class="px-4 py-2 bg-[var(--accent-primary)] text-black font-orbitron font-bold text-xs">INITIALIZE GOAL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* -------------------------------------------------------------------------- */
+        /* STATE MANAGEMENT & INITIAL DATA                                           */
+        /* -------------------------------------------------------------------------- */
+        let transactions = [
+            { id: 'TX-9021', title: 'Cyberware Maintenance Payload', amount: 450.00, type: 'expense', category: 'Cybernetics & Tech', date: '2026-10-01' },
+            { id: 'TX-9022', title: 'Quantum Node Staking Yield', amount: 2850.00, type: 'income', category: 'Yield Payload', date: '2026-10-01' },
+            { id: 'TX-9023', title: 'Mainframe Grid Electricity', amount: 320.00, type: 'expense', category: 'Housing & Grid', date: '2026-09-29' },
+            { id: 'TX-9024', title: 'Synthesized Nutrient Pack', amount: 120.00, type: 'expense', category: 'Nutrients & Fuel', date: '2026-09-28' }
+        ];
+
+        let goals = [
+            { id: 'G-1', title: 'Neural Rig Upgrade', target: 5000, current: 3200 },
+            { id: 'G-2', title: 'Off-Grid Safehouse Reserve', target: 15000, current: 8400 }
+        ];
+
+        let audioEnabled = true;
+        let activeFilter = 'all';
+
+        /* -------------------------------------------------------------------------- */
+        /* WEB AUDIO API SOUND FX GENERATOR                                           */
+        /* -------------------------------------------------------------------------- */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSynthTone(freq, type = 'sine', duration = 0.1) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log('Audio init blocked or not supported');
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btnText = document.getElementById('sound-text');
+            const btnIcon = document.getElementById('sound-icon');
+
+            if (audioEnabled) {
+                btnText.innerText = 'AUDIO ON';
+                btnIcon.className = 'fa-solid fa-volume-high';
+                playSynthTone(880, 'sine', 0.15);
+            } else {
+                btnText.innerText = 'AUDIO OFF';
+                btnIcon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* THEME SWITCHER                                                             */
+        /* -------------------------------------------------------------------------- */
+        function setTheme(themeName) {
+            playSynthTone(520, 'square', 0.1);
+            document.body.className = "min-h-screen relative flex flex-col justify-between selection:bg-teal-500 selection:text-black";
+            
+            if (themeName === 'synthwave') {
+                document.body.classList.add('theme-synthwave');
+            } else if (themeName === 'abyss') {
+                document.body.classList.add('theme-abyss');
+            }
+            
+            // Re-render visuals to adjust glowing colors
+            renderDashboard();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* MATRIX RAIN VISUALIZER CANVAS                                             */
+        /* -------------------------------------------------------------------------- */
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrixRain() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const style = getComputedStyle(document.body);
+            const accentColor = style.getPropertyValue('--accent-primary').trim() || '#00ffaa';
+
+            ctx.fillStyle = accentColor;
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = katakana.charAt(Math.floor(Math.random() * katakana.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrixRain, 33);
+
+        /* -------------------------------------------------------------------------- */
+        /* CORE CALCULATIONS & RENDERERS                                              */
+        /* -------------------------------------------------------------------------- */
+        function calculateMetrics() {
+            const totalIncome = transactions
+                .filter(t => t.type === 'income')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const totalExpenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const netBalance = totalIncome - totalExpenses;
+
+            document.getElementById('stat-net-balance').innerText = `$${netBalance.toFixed(2)}`;
+            document.getElementById('stat-total-expenses').innerText = `$${totalExpenses.toFixed(2)}`;
+
+            // Bars scaling logic
+            const maxVal = Math.max(totalIncome, totalExpenses, 1);
+            document.getElementById('stat-balance-bar').style.width = `${Math.min(100, Math.max(10, (netBalance / maxVal) * 100))}%`;
+            document.getElementById('stat-expense-bar').style.width = `${Math.min(100, (totalExpenses / maxVal) * 100)}%`;
+        }
+
+        function renderLedger() {
+            const tbody = document.getElementById('ledger-body');
+            tbody.innerHTML = '';
+
+            const filtered = transactions.filter(t => {
+                if (activeFilter === 'all') return true;
+                return t.type === activeFilter;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">NO TRANSACTION DATA DETECTED</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/5 transition-all';
+
+                const isIncome = t.type === 'income';
+                const sign = isIncome ? '+' : '-';
+                const colorClass = isIncome ? 'text-emerald-400' : 'text-rose-400';
+
+                tr.innerHTML = `
+                    <td class="py-3 font-mono text-[11px] text-slate-400">${t.id}<br><span class="text-[9px] text-slate-600">${t.date}</span></td>
+                    <td class="py-3 font-bold text-white">${t.title}</td>
+                    <td class="py-3"><span class="px-2 py-0.5 bg-black/40 border border-[var(--border-color)] text-[10px] text-slate-300">${t.category}</span></td>
+                    <td class="py-3 text-right font-bold ${colorClass}">${sign}$${t.amount.toFixed(2)}</td>
+                    <td class="py-3 text-center">
+                        <button onclick="deleteTransaction('${t.id}')" class="text-slate-500 hover:text-rose-400 text-xs px-2">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTransactions(type) {
+            playSynthTone(400, 'triangle', 0.08);
+            activeFilter = type;
+            renderLedger();
+        }
+
+        function handleAddTransaction(e) {
+            e.preventDefault();
+            playSynthTone(600, 'sine', 0.12);
+
+            const title = document.getElementById('tx-title').value;
+            const amount = parseFloat(document.getElementById('tx-amount').value);
+            const type = document.getElementById('tx-type').value;
+            const category = document.getElementById('tx-category').value;
+
+            const newTx = {
+                id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+                title,
+                amount,
+                type,
+                category,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            transactions.unshift(newTx);
+            document.getElementById('tx-form').reset();
+
+            renderDashboard();
+        }
+
+        function deleteTransaction(id) {
+            playSynthTone(300, 'sawtooth', 0.1);
+            transactions = transactions.filter(t => t.id !== id);
+            renderDashboard();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* EXPENSE HEATMAP RENDERING                                                  */
+        /* -------------------------------------------------------------------------- */
+        function renderHeatmap() {
+            const container = document.getElementById('heatmap-grid');
+            container.innerHTML = '';
+
+            const categories = [
+                'Cybernetics & Tech',
+                'Housing & Grid',
+                'Nutrients & Fuel',
+                'Data & Cloud',
+                'Entertainment Matrix'
+            ];
+
+            const categoryTotals = {};
+            categories.forEach(cat => categoryTotals[cat] = 0);
+
+            let maxExpense = 1;
+            transactions.filter(t => t.type === 'expense').forEach(t => {
+                if (categoryTotals[t.category] !== undefined) {
+                    categoryTotals[t.category] += t.amount;
+                    if (categoryTotals[t.category] > maxExpense) {
+                        maxExpense = categoryTotals[t.category];
+                    }
+                }
+            });
+
+            categories.forEach(cat => {
+                const total = categoryTotals[cat];
+                const intensity = Math.min(1, total / maxExpense);
+                
+                // Color scaling based on intensity
+                const bgOpacity = 0.1 + (intensity * 0.4);
+                const borderOpacity = 0.2 + (intensity * 0.6);
+
+                const div = document.createElement('div');
+                div.className = `p-3 border flex flex-col justify-between transition-all`;
+                div.style.backgroundColor = `rgba(255, 0, 100, ${bgOpacity})`;
+                div.style.borderColor = `rgba(255, 0, 100, ${borderOpacity})`;
+
+                div.innerHTML = `
+                    <div class="text-[10px] text-slate-300 truncate">${cat}</div>
+                    <div class="font-orbitron font-bold text-sm text-white mt-1">$${total.toFixed(2)}</div>
+                    <div class="w-full h-1 bg-black/50 mt-2">
+                        <div class="h-full bg-rose-500" style="width: ${intensity * 100}%"></div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* TARGET GOALS MATRIX                                                        */
+        /* -------------------------------------------------------------------------- */
+        function renderGoals() {
+            const container = document.getElementById('goals-container');
+            container.innerHTML = '';
+
+            goals.forEach(g => {
+                const percent = Math.min(100, Math.round((g.current / g.target) * 100));
+                
+                const div = document.createElement('div');
+                div.className = 'bg-black/40 border border-[var(--border-color)] p-3 font-mono text-xs space-y-2';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-white">${g.title}</span>
+                        <span class="text-[var(--accent-primary)] font-orbitron">${percent}%</span>
+                    </div>
+                    <div class="w-full h-2 bg-black/80 rounded overflow-hidden border border-white/10">
+                        <div class="h-full bg-[var(--accent-primary)] transition-all duration-500" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-400">
+                        <span>SAVED: $${g.current}</span>
+                        <span>TARGET: $${g.target}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function showGoalModal() {
+            playSynthTone(500, 'sine', 0.1);
+            document.getElementById('goal-modal').classList.remove('hidden');
+        }
+
+        function hideGoalModal() {
+            document.getElementById('goal-modal').classList.add('hidden');
+        }
+
+        function saveGoal() {
+            playSynthTone(700, 'sine', 0.15);
+            const name = document.getElementById('goal-name-input').value;
+            const target = parseFloat(document.getElementById('goal-target-input').value);
+            const current = parseFloat(document.getElementById('goal-current-input').value) || 0;
+
+            if (name && target) {
+                goals.push({
+                    id: `G-${goals.length + 1}`,
+                    title: name,
+                    target: target,
+                    current: current
+                });
+                renderGoals();
+                hideGoalModal();
+                document.getElementById('goal-name-input').value = '';
+                document.getElementById('goal-target-input').value = '';
+                document.getElementById('goal-current-input').value = '';
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* SYNAPSE AI PROMPT ENGINE                                                   */
+        /* -------------------------------------------------------------------------- */
+        function executeAIQuery() {
+            const inputEl = document.getElementById('ai-input');
+            const chatBox = document.getElementById('ai-chat-box');
+            const query = inputEl.value.trim();
+
+            if (!query) return;
+
+            playSynthTone(800, 'sine', 0.08);
+
+            // Append User Message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'text-slate-300';
+            userMsg.innerHTML = `<span class="text-slate-500 font-bold">[OPERATOR]:</span> ${query}`;
+            chatBox.appendChild(userMsg);
+
+            inputEl.value = '';
+
+            // AI Processing simulation
+            setTimeout(() => {
+                playSynthTone(950, 'triangle', 0.12);
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'text-slate-300';
+                
+                let responseText = generateAIResponse(query.toLowerCase());
+                aiMsg.innerHTML = `<span class="text-[var(--accent-primary)] font-bold">[SYNAPSE AI]:</span> ${responseText}`;
+                chatBox.appendChild(aiMsg);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 600);
+        }
+
+        function generateAIResponse(q) {
+            const totalExp = transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+            const totalInc = transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+
+            if (q.includes('optimize') || q.includes('spending') || q.includes('save')) {
+                return `Analysis complete. Your highest expenditure category is currently registered under active grid operations. Reducing 'Cybernetics & Tech' by 15% could yield ~$${(totalExp * 0.15).toFixed(2)} in operational reserves monthly.`;
+            } else if (q.includes('balance') || q.includes('net') || q.includes('forecast')) {
+                const net = totalInc - totalExp;
+                return `Current liquid balance sits at $${net.toFixed(2)}. Based on current burn rates, your net margin ratio is ${((net / (totalInc || 1)) * 100).toFixed(1)}%. Projected 30-day forecast remains STABLE.`;
+            } else if (q.includes('hello') || q.includes('hi') || q.includes('status')) {
+                return `System operating at peak efficiency. Financial matrix online. Ready for command execution.`;
+            } else {
+                return `Query analyzed. Matrix recommend keeping monthly expense threshold below $${(totalInc * 0.7).toFixed(2)} to guarantee goal matrix target realization.`;
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* EXPORT DATA REPORT (JSON FILE)                                             */
+        /* -------------------------------------------------------------------------- */
+        function exportJSONReport() {
+            playSynthTone(900, 'square', 0.2);
+
+            const dataReport = {
+                timestamp: new Date().toISOString(),
+                system: "SYNAPSE MATRIX AI",
+                metrics: {
+                    totalIncome: transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0),
+                    totalExpenses: transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0),
+                },
+                transactions: transactions,
+                targetGoals: goals
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataReport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `synapse_matrix_report_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* MASTER RENDER & CLOCK                                                      */
+        /* -------------------------------------------------------------------------- */
+        function renderDashboard() {
+            calculateMetrics();
+            renderLedger();
+            renderHeatmap();
+            renderGoals();
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock-display').innerText = now.toUTCString().replace('GMT', 'UTC');
+        }
+
+        setInterval(updateClock, 1000);
+
+        // Initial launch
+        window.onload = function() {
+            renderDashboard();
+            updateClock();
+        };
+    </script>
+</body>
+</html>
